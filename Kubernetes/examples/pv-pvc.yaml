@@ -1,0 +1,46 @@
+# PersistentVolume (admin provisions this)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /mnt/data
+
+---
+# PersistentVolumeClaim (developer requests this)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# Pod using the PVC
+apiVersion: v1
+kind: Pod
+metadata:
+  name: storage-pod
+spec:
+  volumes:
+    - name: app-storage
+      persistentVolumeClaim:
+        claimName: app-pvc
+  containers:
+    - name: app
+      image: nginx:1.25
+      volumeMounts:
+        - name: app-storage
+          mountPath: /usr/share/nginx/html

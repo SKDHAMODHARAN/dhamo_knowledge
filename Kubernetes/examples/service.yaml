@@ -1,0 +1,45 @@
+# ClusterIP Service — internal access only
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: web-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+
+---
+# NodePort Service — external access via node IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-nodeport
+spec:
+  type: NodePort
+  selector:
+    app: web-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+
+---
+# LoadBalancer Service — external access via cloud LB
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: web-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
